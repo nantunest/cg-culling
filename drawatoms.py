@@ -106,7 +106,7 @@ if __name__ == '__main__':
         milliseconds = clock.tick(FPS)
         playtime += float(milliseconds) / 1000.0
 
-        text = "FPS: {0:.2f}   Playtime: {1:.2f}".format(clock.get_fps(), playtime)
+        text = "FPS: {0:.2f}".format(clock.get_fps())
         pygame.display.set_caption(text)
 
         for event in pygame.event.get():

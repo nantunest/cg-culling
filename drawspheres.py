@@ -38,8 +38,6 @@ class Sphere:
 
 def displayFunc():
 
-    print "display"
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     glMatrixMode(GL_PROJECTION)
@@ -52,37 +50,38 @@ def displayFunc():
 
     glLoadIdentity()
 
-    glTranslatef(0, 0, 0)
+    glTranslatef(0, 0, movement)
 
     for i in ATOMS:
        i.draw()
 
     glutSwapBuffers()
 
-def calculateFPS():
-    pass
 
-def idleFunc():
-    idleFunc.frame_counter += 1
+def calculateFPS():
+    calculateFPS.frame_counter += 1
 
     currentTime = glutGet(GLUT_ELAPSED_TIME)
-    timeInterval = currentTime - idleFunc.previousTime
+    timeInterval = currentTime - calculateFPS.previousTime
 
     global movement
 
     if timeInterval > 1000:
         #movement += 0.5
 
-        fps = float(idleFunc.frame_counter) / (float(timeInterval)/1000.0)
-        idleFunc.previousTime = currentTime
-        idleFunc.frame_counter = 0
+        fps = float(calculateFPS.frame_counter) / (float(timeInterval)/1000.0)
+        calculateFPS.previousTime = currentTime
+        calculateFPS.frame_counter = 0
 
-        print movement, fps
+        print fps
 
-        glutPostRedisplay()
+calculateFPS.frame_counter = 0
+calculateFPS.previousTime = 0
 
-idleFunc.frame_counter = 1
-idleFunc.previousTime = 0;
+def idleFunc():
+    calculateFPS()
+    glutPostRedisplay()
+
 
 if __name__ == '__main__':
 
@@ -91,15 +90,15 @@ if __name__ == '__main__':
     glutInit()
     glutInitWindowSize(800,600)
 
-    glutCreateWindow("DrawAtoms")
+    glutCreateWindow("DrawSpheres")
 
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
 
 #    glRotate(90, -1, 0, 0)
 #    glDepthRange(0, 50)
 
-    glutIdleFunc(idleFunc)
-
     glutDisplayFunc(displayFunc)
+
+    glutIdleFunc(idleFunc)
 
     glutMainLoop()

@@ -36,6 +36,22 @@ class Sphere:
         glutSolidSphere(0.3, 5, 5)
         glPopMatrix()
 
+def culling():
+
+    return [i for i in ATOMS if bounding_box_culling(i)]
+
+def frustrum_culling():
+    pass
+
+def space_subdivision_culling():
+    pass
+
+def bounding_box_culling(sphere):
+    if sphere.x < 20 and sphere.x > -20 and sphere.y < 20 and sphere.y > -20 and sphere.z < 20 and sphere.z > -20:
+        return True
+    else:
+        return False
+
 def displayFunc():
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -52,7 +68,7 @@ def displayFunc():
 
     glTranslatef(0, 0, movement)
 
-    for i in ATOMS:
+    for i in culling():
        i.draw()
 
     glutSwapBuffers()
@@ -80,6 +96,8 @@ calculateFPS.previousTime = 0
 
 def idleFunc():
     calculateFPS()
+    global movement
+    movement += 1
     glutPostRedisplay()
 
 

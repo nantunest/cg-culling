@@ -1,5 +1,5 @@
-import pygame
-from pygame.locals import *
+#import pygame
+#from pygame.locals import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -9,7 +9,24 @@ ATOM_COLORS = {'H':(1,0,0), 'O':(0,1,0), 'C':(0,0,1), 'N':(1,1,0), 'S':(0,1,1)}
 
 ATOMS = []
 
-movement = -150
+zoffset = -120
+xoffset = -100
+yoffset = 0
+
+# def drawText(x,y,text,color=TEXT_COLOR):
+#   """Draws given text at given 2d position of given color"""
+#
+#   glColor(color)
+#
+#   if(x<=0 or y<=0):
+#     glRasterPos2i(0,0)
+#     glBitmap(0, 0, 0, 0, x, y, None)
+#   else:
+#     glRasterPos2i(x,y)
+#
+#   for i in text:
+#     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(i))
+
 
 def load_file(file_name):
 
@@ -27,13 +44,16 @@ class Sphere:
         self.z = z
         self.t = t
         self.color = ATOM_COLORS[t]
+        self.slices = 3
+        self.stacks = 3
+        self.radius = 0.3
 
     def draw(self):
 
         glPushMatrix()
         glColor3f(*self.color)
         glTranslatef(self.x, self.y, self.z)
-        glutSolidSphere(0.3, 5, 5)
+        glutSolidSphere(self.radius, self.slices, self.stacks)
         glPopMatrix()
 
 def culling():
@@ -43,7 +63,7 @@ def culling():
 def frustrum_culling():
     pass
 
-def space_subdivision_culling():
+def space_subdivision_culling(sphere):
     pass
 
 def bounding_box_culling(sphere):
@@ -51,6 +71,9 @@ def bounding_box_culling(sphere):
         return True
     else:
         return False
+
+def level_of_detail_culling(sphere):
+    pass
 
 def displayFunc():
 
@@ -66,10 +89,30 @@ def displayFunc():
 
     glLoadIdentity()
 
-    glTranslatef(0, 0, movement)
+    glTranslatef(xoffset, yoffset, zoffset)
 
     for i in culling():
        i.draw()
+
+    glMatrixMode( GL_PROJECTION )
+    glPushMatrix()
+    glLoadIdentity()
+    glMatrixMode( GL_MODELVIEW )
+    glPushMatrix()
+    glLoadIdentity()
+
+    glDisable( GL_DEPTH_TEST )
+
+    glRasterPos2i(-1,-1)
+    glColor3f(0.0,1.0,1.0)
+    fpss = "{0:.2f}".format(calculateFPS.fps)
+    for i in fpss:
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ord(i))
+
+    glMatrixMode( GL_PROJECTION )
+    glPopMatrix()
+    glMatrixMode( GL_MODELVIEW )
+    glPopMatrix()
 
     glutSwapBuffers()
 
@@ -80,24 +123,24 @@ def calculateFPS():
     currentTime = glutGet(GLUT_ELAPSED_TIME)
     timeInterval = currentTime - calculateFPS.previousTime
 
-    global movement
-
     if timeInterval > 1000:
-        #movement += 0.5
 
-        fps = float(calculateFPS.frame_counter) / (float(timeInterval)/1000.0)
+        calculateFPS.fps = float(calculateFPS.frame_counter) / (float(timeInterval)/1000.0)
         calculateFPS.previousTime = currentTime
         calculateFPS.frame_counter = 0
 
-        print fps
+
+    return calculateFPS.fps
 
 calculateFPS.frame_counter = 0
 calculateFPS.previousTime = 0
+calculateFPS.fps = 0
 
 def idleFunc():
-    calculateFPS()
-    global movement
-    movement += 1
+    fps = calculateFPS()
+    global xoffset
+    xoffset += 1
+
     glutPostRedisplay()
 
 

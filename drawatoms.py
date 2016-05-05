@@ -99,11 +99,11 @@ if __name__ == '__main__':
 
     pygame.init()
     display = (800,600)
-    pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+    screen = pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 
     while True:
         # Do not go faster than this framerate.
-        milliseconds = clock.tick(FPS)
+        milliseconds = clock.tick()
         playtime += float(milliseconds) / 1000.0
 
         text = "FPS: {0:.2f}".format(clock.get_fps())

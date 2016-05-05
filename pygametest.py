@@ -39,6 +39,10 @@ FPS = 30
 # How many seconds the "game" is played.
 playtime = 0.0
 
+myfont = pygame.font.Font(None,50)
+label = myfont.render("Some text!", 1, (0,0,0))
+screen.blit(label, (100,100))
+
 while mainloop:
     # Do not go faster than this framerate.
     milliseconds = clock.tick(FPS)
